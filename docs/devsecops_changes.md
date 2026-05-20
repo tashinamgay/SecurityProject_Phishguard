@@ -1,4 +1,4 @@
-# PhishGuard DevSecOps Changes
+# CyberMailGuard DevSecOps Changes
 
 Date: 2026-05-17
 

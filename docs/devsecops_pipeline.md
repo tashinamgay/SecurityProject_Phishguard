@@ -1,4 +1,4 @@
-# PhishGuard DevSecOps Pipeline
+# CyberMailGuard DevSecOps Pipeline
 
 ## Pipeline Goal
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PhishGuard {% block title %}{% endblock %}</title>
+  <title>CyberMailGuard {% block title %}{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -24,7 +24,7 @@
            alt="CIHE"
            style="width:30px;height:30px;border-radius:6px;object-fit:contain;"
            onerror="this.style.display='none'">
-      <span class="brand-name">PhishGuard</span>
+      <span class="brand-name">CyberMailGuard</span>
     </div>
     <nav class="sidebar-nav">
       <a href="{{ url_for('dashboard.index') }}"

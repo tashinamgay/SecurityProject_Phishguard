@@ -31,7 +31,7 @@ def generate_pdf(record):
     story  = []
 
     # Title
-    story.append(Paragraph('PhishGuard — Email Analysis Report', styles['Title']))
+    story.append(Paragraph('CyberMailGuard — Email Analysis Report', styles['Title']))
     story.append(Spacer(1, 10))
 
     # Risk level with colour

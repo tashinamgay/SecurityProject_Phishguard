@@ -32,7 +32,7 @@ def generate_qr_code(secret, username):
     # Build standard TOTP URI that authenticator apps understand
     uri = pyotp.TOTP(secret).provisioning_uri(
         name=username,
-        issuer_name='PhishGuard'
+        issuer_name='CyberMailGuard'
     )
     # Create QR code image
     img = qrcode.make(uri)

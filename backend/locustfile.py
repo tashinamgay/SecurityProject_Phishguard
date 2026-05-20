@@ -1,5 +1,5 @@
 # backend/locustfile.py
-# Performance/Load testing for PhishGuard
+# Performance/Load testing for CyberMailGuard
 # Member: Aditi (Frontend & DevOps Lead)
 #
 # HOW TO RUN:
@@ -12,7 +12,7 @@
 from locust import HttpUser, task, between
 
 
-class PhishGuardUser(HttpUser):
+class CyberMailGuardUser(HttpUser):
     # Wait 1-3 seconds between requests (simulates real user behaviour)
     wait_time = between(1, 3)
 

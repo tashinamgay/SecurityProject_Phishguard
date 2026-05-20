@@ -1,8 +1,8 @@
-# PhishGuard Architecture
+# CyberMailGuard Architecture
 
 ## Overview
 
-PhishGuard is a phishing email detection web application built with a Flask backend, Jinja2 templates, and MongoDB. The application lets authenticated users submit email content or email files, then analyses URLs, headers, attachments, keywords, and ML prediction results to assign a phishing risk score.
+CyberMailGuard is a phishing email detection web application built with a Flask backend, Jinja2 templates, and MongoDB. The application lets authenticated users submit email content or email files, then analyses URLs, headers, attachments, keywords, and ML prediction results to assign a phishing risk score.
 
 ## Architecture Diagram
 
@@ -55,7 +55,7 @@ MongoDB Database
 2. Admin approves pending users and manages roles.
 3. User enables 2FA.
 4. User submits an email for analysis.
-5. PhishGuard parses the email and checks URLs, headers, attachments, and keywords.
+5. CyberMailGuard parses the email and checks URLs, headers, attachments, and keywords.
 6. Risk scorer classifies the email as GREEN, YELLOW, or RED.
 7. RED emails are quarantined for admin review.
 8. User or admin exports reports as PDF or CSV.

@@ -1,9 +1,9 @@
-# 🛡️ PhishGuard — Phishing Email Detector
-> ICT932 Cybersecurity Assessment 3 — Group Project
+﻿# ðŸ›¡ï¸ CyberMailGuard â€” Phishing Email Detector
+> ICT932 Cybersecurity Assessment 3 â€” Group Project
 
 ---
 
-## 👥 Team Members
+## ðŸ‘¥ Team Members
 
 | Member | Role | GitHub Branch |
 |--------|------|---------------|
@@ -14,12 +14,12 @@
 
 ---
 
-## 🚀 Quick Start
+## ðŸš€ Quick Start
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/tashinamgay/phishing-email-detector.git
-cd phishing-email-detector
+git clone https://github.com/tashinamgay/CyberMailGuard.git
+cd CyberMailGuard
 ```
 
 ### 2. Setup
@@ -37,8 +37,8 @@ copy .env.example .env
 ```
 Edit `.env` and add your MongoDB Atlas URI:
 ```
-SECRET_KEY=phishguard-secret-key-2024
-MONGO_URI=mongodb+srv://user:pass@cluster.mongodb.net/phishguard_ict932?retryWrites=true&w=majority&appName=Cluster0
+SECRET_KEY=change-this-to-a-long-random-secret
+MONGO_URI=mongodb+srv://user:pass@cluster.mongodb.net/cybermailguard_ict932?retryWrites=true&w=majority&appName=Cluster0
 FLASK_ENV=development
 OPENAI_API_KEY=optional
 ```
@@ -49,57 +49,57 @@ python app.py
 ```
 Open: **http://localhost:5000**
 
-> ⭐ First user to register = Admin automatically!
+> â­ First user to register = Admin automatically!
 
 ---
 
-## 📁 Project Structure
+## ðŸ“ Project Structure
 
 ```
-├── backend/
-│   ├── app.py                    ← Start server here
-│   ├── src/
-│   │   ├── auth/                 ← Tashi: Login, RBAC, 2FA
-│   │   ├── email_analysis/       ← Giovanni: Parser, URLs, Headers
-│   │   ├── pattern_engine/       ← Masaba: Scoring, ML, Quarantine
-│   │   ├── dashboard/            ← Aditi: Routes, PDF/CSV
-│   │   └── database/             ← MongoDB helpers
-│   ├── tests/                    ← All unit tests
-│   └── locustfile.py             ← Performance testing
-└── frontend/
-    ├── templates/                ← All HTML pages
-    └── static/                   ← CSS + JS
+â”œâ”€â”€ backend/
+â”‚   â”œâ”€â”€ app.py                    â† Start server here
+â”‚   â”œâ”€â”€ src/
+â”‚   â”‚   â”œâ”€â”€ auth/                 â† Tashi: Login, RBAC, 2FA
+â”‚   â”‚   â”œâ”€â”€ email_analysis/       â† Giovanni: Parser, URLs, Headers
+â”‚   â”‚   â”œâ”€â”€ pattern_engine/       â† Masaba: Scoring, ML, Quarantine
+â”‚   â”‚   â”œâ”€â”€ dashboard/            â† Aditi: Routes, PDF/CSV
+â”‚   â”‚   â””â”€â”€ database/             â† MongoDB helpers
+â”‚   â”œâ”€â”€ tests/                    â† All unit tests
+â”‚   â””â”€â”€ locustfile.py             â† Performance testing
+â””â”€â”€ frontend/
+    â”œâ”€â”€ templates/                â† All HTML pages
+    â””â”€â”€ static/                   â† CSS + JS
 ```
 
 ---
 
-## ✅ Features
+## âœ… Features
 
-- 🔐 Secure login with RBAC (Admin/Analyst)
-- 📱 Two-Factor Authentication (2FA)
-- 👥 Admin: approve/suspend/delete/change role
-- 🔍 URL analysis (suspicious domains, shorteners)
-- 📋 Header analysis (spoofed sender detection)
-- 🔑 Keyword matching (urgency, financial, credentials, job scams)
-- 📎 Attachment safety checking
-- 🤖 AI explanation of findings
-- 🧠 ML classifier (optional)
-- 🔴 RED/YELLOW/GREEN risk scoring
-- 🔒 Auto-quarantine RED emails
-- 📥 PDF + CSV export
-- 📊 Admin security panel
-- 📱 Fully responsive design
+- ðŸ” Secure login with RBAC (Admin/Analyst)
+- ðŸ“± Two-Factor Authentication (2FA)
+- ðŸ‘¥ Admin: approve/suspend/delete/change role
+- ðŸ” URL analysis (suspicious domains, shorteners)
+- ðŸ“‹ Header analysis (spoofed sender detection)
+- ðŸ”‘ Keyword matching (urgency, financial, credentials, job scams)
+- ðŸ“Ž Attachment safety checking
+- ðŸ¤– AI explanation of findings
+- ðŸ§  ML classifier (optional)
+- ðŸ”´ RED/YELLOW/GREEN risk scoring
+- ðŸ”’ Auto-quarantine RED emails
+- ðŸ“¥ PDF + CSV export
+- ðŸ“Š Admin security panel
+- ðŸ“± Fully responsive design
 
 ---
 
-## 🧪 Running Tests
+## ðŸ§ª Running Tests
 
 ```bash
 cd backend
 pytest tests/ -v --cov=src
 ```
 
-## 🔐 Security Scanning
+## ðŸ” Security Scanning
 
 ```bash
 # SAST - Bandit
@@ -113,10 +113,10 @@ python -m pip_audit
 python -m locust -f locustfile.py --host=http://localhost:5000
 ```
 
-## 🔄 CI/CD Pipeline
+## ðŸ”„ CI/CD Pipeline
 
 ```
-Push to GitHub → Build → Bandit SAST → Safety Check → pytest → Deploy
+Push to GitHub -> Build -> Bandit SAST -> pip-audit -> pytest -> OWASP ZAP -> Deploy Gate
 ```
  
 ## DevSecOps Evidence

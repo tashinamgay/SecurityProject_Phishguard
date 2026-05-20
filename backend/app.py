@@ -1,6 +1,6 @@
 # backend/app.py
 # Main Flask application entry point
-# Run this file to start PhishGuard: python app.py
+# Run this file to start CyberMailGuard: python app.py
 
 import os
 from flask import Flask
@@ -67,7 +67,7 @@ def load_user(user_id):
 
 if __name__ == '__main__':
     app = create_app()
-    print("\n🛡️  PhishGuard starting...")
+    print("\n🛡️  CyberMailGuard starting...")
     print("📡  Connecting to MongoDB Atlas...")
     print("🌐  Open your browser at: http://localhost:5000\n")
     debug_mode = os.getenv('FLASK_DEBUG', 'false').lower() == 'true'

@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-print("\n🛡️  PhishGuard Setup Checker")
+print("\n🛡️  CyberMailGuard Setup Checker")
 print("=" * 40)
 
 # Check .env exists

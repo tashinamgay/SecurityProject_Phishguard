@@ -22,7 +22,7 @@ def client():
     app.config.update(
         TESTING=True,
         WTF_CSRF_ENABLED=False,  # disable CSRF for testing
-        MONGO_URI='mongodb://localhost:27017/phishguard_test'
+        MONGO_URI='mongodb://localhost:27017/cybermailguard_test'
     )
     with app.test_client() as c:
         yield c

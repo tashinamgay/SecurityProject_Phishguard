@@ -1,8 +1,8 @@
-# PhishGuard Threat Model
+# CyberMailGuard Threat Model
 
 ## Scope
 
-This threat model covers the PhishGuard web application, its authentication system, phishing analysis workflow, MongoDB data storage, report exports, and DevSecOps testing pipeline.
+This threat model covers the CyberMailGuard web application, its authentication system, phishing analysis workflow, MongoDB data storage, report exports, and DevSecOps testing pipeline.
 
 ## STRIDE Analysis
 
@@ -99,4 +99,4 @@ Evidence:
 
 ## Ethical Boundary
 
-All testing must target only the PhishGuard coursework application and authorised local or CI environments. ZAP and other security tools must not be pointed at third-party systems without permission.
+All testing must target only the CyberMailGuard coursework application and authorised local or CI environments. ZAP and other security tools must not be pointed at third-party systems without permission.

@@ -207,7 +207,7 @@ def export_pdf(aid):
     return Response(generate_pdf(record),
                     mimetype='application/pdf',
                     headers={'Content-Disposition':
-                             f'attachment; filename=phishguard_{aid[:8]}.pdf'})
+                             f'attachment; filename=cybermailguard_{aid[:8]}.pdf'})
 
 
 @dashboard_bp.route('/export/csv')
@@ -222,7 +222,7 @@ def export_csv():
     return Response(generate_csv(analyses),
                     mimetype='text/csv',
                     headers={'Content-Disposition':
-                             'attachment; filename=phishguard_analyses.csv'})
+                             'attachment; filename=cybermailguard_analyses.csv'})
 
 
 @dashboard_bp.route('/admin/security')

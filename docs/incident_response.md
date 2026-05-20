@@ -2,11 +2,11 @@
 
 ## Scenario
 
-An attacker attempts repeated login guesses against a PhishGuard account.
+An attacker attempts repeated login guesses against a CyberMailGuard account.
 
 ## Detection
 
-PhishGuard records login attempts in the login logs collection. Failed attempts are displayed in the admin security panel.
+CyberMailGuard records login attempts in the login logs collection. Failed attempts are displayed in the admin security panel.
 
 Security control:
 

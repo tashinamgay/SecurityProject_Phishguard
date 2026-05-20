@@ -1,4 +1,4 @@
-name: PhishGuard DevSecOps Pipeline
+name: CyberMailGuard DevSecOps Pipeline
 
 on:
   push:
@@ -100,7 +100,7 @@ jobs:
       - name: Run pytest with coverage
         env:
           SECRET_KEY: ci-test-secret
-          MONGO_URI: mongodb://localhost:27017/phishguard_ci
+          MONGO_URI: mongodb://localhost:27017/cybermailguard_ci
         run: |
           mkdir -p docs/testing
           cd backend
@@ -129,10 +129,10 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install and start PhishGuard
+      - name: Install and start CyberMailGuard
         env:
           SECRET_KEY: ci-test-secret
-          MONGO_URI: mongodb://localhost:27017/phishguard_ci
+          MONGO_URI: mongodb://localhost:27017/cybermailguard_ci
           FLASK_DEBUG: "false"
         run: |
           python -m pip install --upgrade pip

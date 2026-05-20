@@ -4,7 +4,7 @@
 from types import SimpleNamespace
 from bson import ObjectId
 
-import app as phishguard_app
+import app as cybermailguard_app
 from app import create_app
 from src.auth.twofa import generate_secret, verify_token
 from src.pattern_engine.ml_classifier import train_model
@@ -15,7 +15,7 @@ def make_app(csrf_enabled=True):
     return create_app({
         'TESTING': True,
         'SECRET_KEY': 'test-secret',
-        'MONGO_URI': 'mongodb://localhost:27017/phishguard_test',
+        'MONGO_URI': 'mongodb://localhost:27017/cybermailguard_test',
         'WTF_CSRF_ENABLED': csrf_enabled,
     })
 
@@ -44,7 +44,7 @@ def test_json_analyse_api_is_csrf_exempt_for_postman_testing():
 
 
 def test_flask_debug_mode_is_not_hardcoded_true():
-    source = phishguard_app.__loader__.get_source(phishguard_app.__name__)
+    source = cybermailguard_app.__loader__.get_source(cybermailguard_app.__name__)
     assert 'app.run(debug=True)' not in source
     assert 'FLASK_DEBUG' in source
 
