@@ -50,12 +50,12 @@ Explain in 3 short points:
 Keep under 150 words. Use simple language."""
 
         response = client.chat.completions.create(
-            model='gpt-3.5-turbo',  # cheapest model
+            model='gpt-3.5-turbo',
             messages=[
                 {'role': 'system', 'content': 'You are a helpful cybersecurity assistant.'},
                 {'role': 'user', 'content': prompt}
             ],
-            max_tokens=250,  # limit to save API credits
+            max_tokens=250,
             temperature=0.7,
         )
         return response.choices[0].message.content.strip()
@@ -67,16 +67,15 @@ Keep under 150 words. Use simple language."""
 def _fallback_explanation(risk_level, risk_score, reasons):
     """Built-in explanation when OpenAI is not available."""
     if risk_level == 'RED':
-        msg = (f"⚠️ HIGH RISK (score: {risk_score}/100) - This email is very likely a phishing attack. "
+        msg = (f"HIGH RISK (score: {risk_score}/100) - This email is very likely a phishing attack. "
                "Do NOT click any links, open attachments or reply. Delete it immediately.")
     elif risk_level == 'YELLOW':
-        msg = (f"⚡ SUSPICIOUS (score: {risk_score}/100) - This email has some phishing indicators. "
+        msg = (f"SUSPICIOUS (score: {risk_score}/100) - This email has some phishing indicators. "
                "Be careful before clicking anything. Verify the sender first.")
     else:
-        msg = (f"✅ SAFE (score: {risk_score}/100) - No major phishing indicators found. "
+        msg = (f"SAFE (score: {risk_score}/100) - No major phishing indicators found. "
                "Standard caution still recommended - never share passwords via email.")
 
-    # Add top 3 findings to explanation
     if reasons:
         top = reasons[:3]
         details = ' Key findings: ' + '; '.join(

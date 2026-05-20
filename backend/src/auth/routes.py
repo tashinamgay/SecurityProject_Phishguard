@@ -74,8 +74,15 @@ def login():
             db[LOGIN_LOGS].insert_one(new_login_log(username, ip, False))
             return redirect(url_for('auth.login'))
 
-        fails = db[LOGIN_LOGS].count_documents({'username': username, 'success': False})
-        if fails >= MAX_FAILS:
+        last_success = db[LOGIN_LOGS].find_one(
+            {'username': username, 'success': True},
+            sort=[('timestamp', -1)]
+        )
+        fail_query = {'username': username, 'success': False}
+        if last_success:
+            fail_query['timestamp'] = {'$gt': last_success['timestamp']}
+        fails = db[LOGIN_LOGS].count_documents(fail_query)
+        if doc and fails >= MAX_FAILS:
             flash('Too many failed attempts. Contact administrator.', 'danger')
             return redirect(url_for('auth.login'))
 

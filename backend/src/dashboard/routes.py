@@ -2,11 +2,12 @@
 # All dashboard page routes
 # Member: Aditi (Frontend & DevOps Lead)
 
-import json, os, tempfile
+import io, json, os, tempfile
 from flask import (Blueprint, render_template, request,
                    redirect, url_for, flash, Response, jsonify)
 from flask_login import login_required, current_user
 from bson import ObjectId
+from docx import Document
 
 from src.database import get_db
 from src.database.collections import (ANALYSES, LOGIN_LOGS, QUARANTINE, new_analysis)
@@ -21,16 +22,30 @@ from src.auth.rbac import admin_required
 dashboard_bp = Blueprint('dashboard', __name__)
 
 
+def _analysis_scope_query():
+    if current_user.role == 'admin':
+        return {}
+    return {'user_id': ObjectId(current_user.id)}
+
+
+def _raw_text_from_upload(file, filename):
+    if filename.endswith(('.txt', '.eml')):
+        return file.read().decode('utf-8', errors='ignore')
+
+    if filename.endswith('.docx'):
+        doc = Document(io.BytesIO(file.read()))
+        paragraphs = [p.text for p in doc.paragraphs if p.text.strip()]
+        return '\n'.join(paragraphs)
+
+    return None
+
+
 @dashboard_bp.route('/')
 @login_required
 def index():
     """Main dashboard showing analysis history and stats."""
     db = get_db()
-    if current_user.role == 'admin':
-        analyses = list(db[ANALYSES].find().sort('analysed_at', -1))
-    else:
-        analyses = list(db[ANALYSES].find(
-            {'user_id': ObjectId(current_user.id)}).sort('analysed_at', -1))
+    analyses = list(db[ANALYSES].find(_analysis_scope_query()).sort('analysed_at', -1))
     total  = len(analyses)
     red    = sum(1 for a in analyses if a['risk_level'] == 'RED')
     yellow = sum(1 for a in analyses if a['risk_level'] == 'YELLOW')
@@ -43,21 +58,29 @@ def index():
 @dashboard_bp.route('/analyse', methods=['GET', 'POST'])
 @login_required
 def analyse():
-    """Upload .txt/.eml file or fill in email fields for analysis."""
+    """Upload .txt/.eml/.docx file or fill in email fields for analysis."""
     if request.method == 'POST':
         raw = ''
+        form_values = {
+            'subject': request.form.get('email_subject', '').strip(),
+            'from': request.form.get('email_from', '').strip(),
+            'body': request.form.get('email_text', '').strip(),
+        }
 
         if 'email_file' in request.files and request.files['email_file'].filename:
             file     = request.files['email_file']
             filename = file.filename.lower()
-            if not (filename.endswith('.txt') or filename.endswith('.eml')):
-                flash('Invalid file type! Only .txt and .eml files accepted.', 'danger')
+            if not filename.endswith(('.txt', '.eml', '.docx')):
+                flash('Invalid file type! Only .txt, .eml and .docx files accepted.', 'danger')
                 return redirect(url_for('dashboard.analyse'))
-            raw = file.read().decode('utf-8', errors='ignore')
+            raw = _raw_text_from_upload(file, filename) or ''
+            if not raw.strip():
+                flash('The uploaded file does not contain readable text.', 'warning')
+                return redirect(url_for('dashboard.analyse'))
         else:
-            subject  = request.form.get('email_subject', '').strip()
-            from_    = request.form.get('email_from', '').strip()
-            body     = request.form.get('email_text', '').strip()
+            subject  = form_values['subject']
+            from_    = form_values['from']
+            body     = form_values['body']
 
             if not body and not subject:
                 flash('Please upload a file or fill in the email details.', 'warning')
@@ -96,8 +119,14 @@ def analyse():
 
         if scored['risk_level'] == 'RED':
             quarantine_email(str(inserted.inserted_id), raw)
+            doc['is_quarantined'] = True
 
-        return redirect(url_for('dashboard.results', aid=str(inserted.inserted_id)))
+        doc['_id'] = inserted.inserted_id
+        return render_template('dashboard/analyse.html',
+                               record=doc,
+                               aid=str(inserted.inserted_id),
+                               reasons=doc.get('reasons', []),
+                               form_values=form_values)
 
     return render_template('dashboard/analyse.html')
 
@@ -215,10 +244,10 @@ def export_pdf(aid):
 def export_csv():
     """Download all analyses as CSV."""
     db = get_db()
-    if current_user.role == 'admin':
-        analyses = list(db[ANALYSES].find())
-    else:
-        analyses = list(db[ANALYSES].find({'user_id': ObjectId(current_user.id)}))
+    analyses = list(db[ANALYSES].find(_analysis_scope_query()))
+    if not analyses:
+        flash('Analyse an email before exporting CSV.', 'warning')
+        return redirect(url_for('dashboard.analyse'))
     return Response(generate_csv(analyses),
                     mimetype='text/csv',
                     headers={'Content-Disposition':

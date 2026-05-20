@@ -10,6 +10,7 @@ qrcode[pil]
 beautifulsoup4
 requests
 reportlab
+python-docx
 python-dotenv
 email-validator
 openai

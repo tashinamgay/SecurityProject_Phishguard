@@ -31,9 +31,9 @@ def create_app(test_config=None):
         app.config.update(test_config)
         mongo_uri = app.config.get('MONGO_URI', mongo_uri)
     if not mongo_uri:
-        raise RuntimeError("\n❌ MONGO_URI not set! Copy .env.example to .env\n")
+        raise RuntimeError("\nMONGO_URI not set. Copy .env.example to .env\n")
     app.config['MONGO_URI'] = mongo_uri
-    # 16MB upload limit — needed for ML dataset CSV uploads
+    # 16MB upload limit, needed for ML dataset CSV uploads
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
     # Keep CSRF enabled for browser forms. JSON API endpoints are exempted
     # below so Postman/API testing still works without weakening every route.
@@ -67,8 +67,8 @@ def load_user(user_id):
 
 if __name__ == '__main__':
     app = create_app()
-    print("\n🛡️  CyberMailGuard starting...")
-    print("📡  Connecting to MongoDB Atlas...")
-    print("🌐  Open your browser at: http://localhost:5000\n")
+    print("\nCyberMailGuard starting...")
+    print("Connecting to MongoDB Atlas...")
+    print("Open your browser at: http://localhost:5000\n")
     debug_mode = os.getenv('FLASK_DEBUG', 'false').lower() == 'true'
     app.run(debug=debug_mode)

@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %}— 2FA Setup{% endblock %}
+{% block title %} 2FA Setup{% endblock %}
 {% block content %}
 <div class="auth-card" style="max-width:460px;">
   <div style="text-align:center;margin-bottom:20px;">
-    <div style="font-size:2em;margin-bottom:6px;">📱</div>
+    <div style="font-size:2em;margin-bottom:6px;"></div>
     <h1 class="auth-h1">Setup Two-Factor Auth</h1>
     <p class="auth-sub">Scan the QR code with Google Authenticator</p>
   </div>
@@ -37,12 +37,12 @@
              placeholder="000000" maxlength="6"
              pattern="\d{6}" required autofocus>
     </div>
-    <button class="btn bp bfull" type="submit">✅ Verify & Enable 2FA</button>
+    <button class="btn bp bfull" type="submit"> Verify & Enable 2FA</button>
   </form>
 
   <p style="text-align:center;margin-top:14px;">
     <a href="{{ url_for('dashboard.index') }}" class="muted"
-       style="font-size:.83em;">Skip for now →</a>
+       style="font-size:.83em;">Skip for now </a>
   </p>
 </div>
 {% endblock %}

@@ -1,97 +1,219 @@
 {% extends "base.html" %}
-{% block title %}— Analyse{% endblock %}
+{% block title %}- Analyse{% endblock %}
 {% block content %}
 
+<div class="analyse-wrap">
 <div class="page-hdr">
   <div>
-    <h1 class="ptitle">🔍 Analyse Email</h1>
-    <p class="psub">Upload a .txt or .eml file, or fill in the email details below</p>
+    <h1 class="ptitle">Analyse Email</h1>
+    <p class="psub">Upload a .txt, .eml, or .docx file, or fill in the email details below</p>
   </div>
 </div>
 
-<div class="card" style="max-width:780px;">
-  <form method="POST" enctype="multipart/form-data" id="analyseForm">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<div class="analyse-live-grid {% if record %}has-result{% endif %}">
+  <div class="analyse-left">
+    <div class="card analyse-card">
+      <form method="POST" enctype="multipart/form-data" id="analyseForm">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-    <!-- Compact Upload Zone -->
-    <div class="drop-zone-small" id="dropZone">
-      <span style="font-size:1.4em;">📎</span>
-      <span style="font-weight:600;">Drop .txt or .eml file here</span>
-      <span class="muted" style="font-size:.82em;">or click to browse</span>
-      <input type="file" name="email_file" id="fileInput"
-             accept=".txt,.eml" style="display:none;">
-      <span id="fileName"
-            style="font-size:.82em;color:var(--green);margin-left:auto;"></span>
+        <div class="drop-zone-small" id="dropZone">
+          <span style="font-weight:700;">File upload</span>
+          <span style="font-weight:600;">Drop .txt, .eml, or .docx file here</span>
+          <span class="muted" style="font-size:.82em;">or click to browse</span>
+          <input type="file" name="email_file" id="fileInput"
+                 accept=".txt,.eml,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                 style="display:none;">
+          <span id="fileName"
+                style="font-size:.82em;color:var(--green);margin-left:auto;"></span>
+        </div>
+
+        <div class="divider"><span>OR fill in manually</span></div>
+
+        <div style="margin-bottom:16px;">
+          <p style="font-size:.82em;color:var(--muted);margin-bottom:8px;">
+            Quick fill with sample email:
+          </p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="btn bo bs" onclick="fillSample('phishing')">
+              Phishing Sample
+            </button>
+            <button type="button" class="btn bo bs" onclick="fillSample('safe')">
+              Safe Sample
+            </button>
+            <button type="button" class="btn bo bs" onclick="fillSample('jobscam')">
+              Job Scam Sample
+            </button>
+            <button type="button" class="btn bo bs" onclick="clearForm()">
+              Clear
+            </button>
+          </div>
+        </div>
+
+        <div class="fg">
+          <label>Subject</label>
+          <input class="fi" type="text" name="email_subject" id="fSubject"
+                 value="{{ form_values.subject if form_values else '' }}"
+                 placeholder="Email subject line">
+        </div>
+
+        <div class="fg">
+          <label>From</label>
+          <input class="fi" type="text" name="email_from" id="fFrom"
+                 value="{{ form_values['from'] if form_values else '' }}"
+                 placeholder="sender@domain.com">
+        </div>
+
+        <div class="fg">
+          <label>Email Body</label>
+          <textarea class="fi" name="email_text" id="fBody"
+                    rows="8"
+                    placeholder="Paste the email body here...">{{ form_values.body if form_values else '' }}</textarea>
+        </div>
+
+        <button class="btn bp bfull" type="submit" id="submitBtn">
+          Run Analysis
+        </button>
+      </form>
     </div>
+  </div>
 
-    <div class="divider"><span>OR fill in manually</span></div>
+  {% if record %}
+  <div class="analyse-result-panel">
+    {% set header_hits = [] %}
+    {% set url_hits = [] %}
+    {% set attach_hits = [] %}
+    {% set kw_hits = [] %}
+    {% for r in reasons %}
+      {% if '[HEADER]' in r %}{% set _ = header_hits.append(r) %}{% endif %}
+      {% if '[URL]' in r %}{% set _ = url_hits.append(r) %}{% endif %}
+      {% if '[ATTACHMENT]' in r %}{% set _ = attach_hits.append(r) %}{% endif %}
+      {% if '[KEYWORD' in r %}{% set _ = kw_hits.append(r) %}{% endif %}
+    {% endfor %}
 
-    <!-- Quick Fill Buttons -->
-    <div style="margin-bottom:16px;">
-      <p style="font-size:.82em;color:var(--muted);margin-bottom:8px;">
-        ⚡ Quick fill with sample email:
-      </p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button type="button" class="btn bo bs" onclick="fillSample('phishing')">
-          🔴 Phishing Sample
-        </button>
-        <button type="button" class="btn bo bs" onclick="fillSample('safe')">
-          🟢 Safe Sample
-        </button>
-        <button type="button" class="btn bo bs" onclick="fillSample('jobscam')">
-          🟡 Job Scam Sample
-        </button>
-        <button type="button" class="btn bo bs" onclick="clearForm()">
-          🗑 Clear
-        </button>
+    <div class="inline-report rb-{{ record.risk_level.lower() }}">
+      <div class="inline-report-head">
+        <div>
+          <p class="risk-kicker">{{ record.risk_level }}</p>
+          {% if record.risk_level == 'RED' %}
+            <h2>Phishing likely</h2>
+            <p>Threat indicators were found in this message.</p>
+          {% elif record.risk_level == 'YELLOW' %}
+            <h2>Suspicious email</h2>
+            <p>Some warning signs were found. Verify before acting.</p>
+          {% else %}
+            <h2>Looks safe</h2>
+            <p>No major phishing indicators were detected.</p>
+          {% endif %}
+        </div>
+        <span class="risk-pill">{{ record.risk_score }}/100</span>
+      </div>
+
+      <div class="inline-metrics">
+        <div><span>Risk score</span><strong>{{ record.risk_score }}%</strong></div>
+        <div><span>URLs</span><strong>{{ record.url_count }}</strong></div>
+        <div><span>Findings</span><strong>{{ reasons|length }}</strong></div>
+      </div>
+
+      <div class="prob-bars">
+        <div class="prob-row">
+          <span>Phishing probability</span>
+          <strong>{{ record.risk_score }}%</strong>
+        </div>
+        <div class="prob-track"><span class="prob-danger" style="width:{{ record.risk_score }}%"></span></div>
+        <div class="prob-row">
+          <span>Safe probability</span>
+          <strong>{{ 100 - record.risk_score }}%</strong>
+        </div>
+        <div class="prob-track"><span class="prob-safe" style="width:{{ 100 - record.risk_score }}%"></span></div>
+      </div>
+
+      <div class="inline-warning">
+        {% if record.risk_level == 'RED' %}
+          Avoid clicking links, downloading attachments, or entering passwords until this email is verified through another trusted channel.
+        {% elif record.risk_level == 'YELLOW' %}
+          Review the sender, links, and request carefully before responding.
+        {% else %}
+          Continue using normal caution with links, attachments, and password requests.
+        {% endif %}
       </div>
     </div>
 
-    <!-- Subject -->
-    <div class="fg">
-      <label>📌 Subject</label>
-      <input class="fi" type="text" name="email_subject" id="fSubject"
-             placeholder="Email subject line">
+    <div class="card compact-report-card">
+      <div class="report-card-head">
+        <h3>AI Explanation</h3>
+        <a href="{{ url_for('dashboard.export_pdf', aid=aid) }}" class="btn bo bs">Download Report</a>
+      </div>
+      <p>{{ record.ai_explanation }}</p>
     </div>
 
-    <!-- From only - no Reply-To -->
-    <div class="fg">
-      <label>👤 From</label>
-      <input class="fi" type="text" name="email_from" id="fFrom"
-             placeholder="sender@domain.com">
+    {% if record.ml_prediction %}
+    <div class="card compact-report-card">
+      <h3>ML Classifier Prediction</h3>
+      <p>Prediction: <strong>{{ record.ml_prediction.prediction | capitalize }}</strong>
+      with {{ record.ml_prediction.confidence }}% confidence.</p>
+    </div>
+    {% endif %}
+
+    <div class="card compact-report-card">
+      <h3>Detection Summary</h3>
+      <div class="mini-breakdown">
+        <div><span>Header Spoofing</span><strong>{{ header_hits|length }}</strong></div>
+        <div><span>Suspicious URLs</span><strong>{{ url_hits|length }}</strong></div>
+        <div><span>Attachment Threats</span><strong>{{ attach_hits|length }}</strong></div>
+        <div><span>Keyword Matches</span><strong>{{ kw_hits|length }}</strong></div>
+      </div>
     </div>
 
-    <!-- Email Body -->
-    <div class="fg">
-      <label>📝 Email Body</label>
-      <textarea class="fi" name="email_text" id="fBody"
-                rows="8"
-                placeholder="Paste the email body here..."></textarea>
+    <div class="card compact-report-card">
+      <h3>Full Detection Findings</h3>
+      {% if reasons %}
+        <ul class="findings compact-findings">
+          {% for r in reasons[:6] %}
+          <li class="fi-item
+            {% if '[HEADER]' in r %}fi-header
+            {% elif '[URL]' in r %}fi-url
+            {% elif '[ATTACHMENT]' in r %}fi-attach
+            {% elif '[KEYWORD' in r %}fi-kw
+            {% else %}fi-pat{% endif %}">
+            <span class="fi-tag">
+              {% if '[HEADER]' in r %}HEADER
+              {% elif '[URL]' in r %}URL
+              {% elif '[ATTACHMENT]' in r %}ATTACHMENT
+              {% elif 'URGENCY' in r %}URGENCY
+              {% elif 'FINANCIAL' in r %}FINANCIAL
+              {% elif 'CREDENTIALS' in r %}CREDENTIALS
+              {% elif 'JOB_SCAM' in r %}JOB SCAM
+              {% else %}PATTERN{% endif %}
+            </span>
+            <span>{{ r.split('] ', 1)[-1] if ']' in r else r }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="muted">No suspicious indicators detected.</p>
+      {% endif %}
     </div>
-
-    <button class="btn bp bfull" type="submit" id="submitBtn">
-      🔍 Run Analysis
-    </button>
-  </form>
+  </div>
+  {% endif %}
 </div>
 
-<!-- What CyberMailGuard checks -->
-<div class="card info-box" style="max-width:780px;">
-  <h3 style="margin-bottom:14px;font-size:.95em;">🔎 What CyberMailGuard checks:</h3>
+<div class="card info-box analyse-info-card">
+  <h3 style="margin-bottom:14px;font-size:.95em;">What CyberMailGuard checks:</h3>
   <div class="check-grid">
-    <div class="ck">🔗 <strong>URL Analysis</strong><br>
+    <div class="ck"><strong>URL Analysis</strong><br>
       <span class="muted">Suspicious domains, shorteners, raw IPs</span></div>
-    <div class="ck">📋 <strong>Header Analysis</strong><br>
+    <div class="ck"><strong>Header Analysis</strong><br>
       <span class="muted">Spoofed senders, SPF failures, Reply-To mismatch</span></div>
-    <div class="ck">🔑 <strong>Keyword Matching</strong><br>
+    <div class="ck"><strong>Keyword Matching</strong><br>
       <span class="muted">Urgency, financial terms, credential requests</span></div>
-    <div class="ck">📎 <strong>Attachment Check</strong><br>
+    <div class="ck"><strong>Attachment Check</strong><br>
       <span class="muted">Dangerous file types, double extensions</span></div>
-    <div class="ck">🤖 <strong>AI Explanation</strong><br>
+    <div class="ck"><strong>AI Explanation</strong><br>
       <span class="muted">Plain-English summary of findings</span></div>
-    <div class="ck">🧠 <strong>ML Classifier</strong><br>
-      <span class="muted">Machine learning prediction (if trained)</span></div>
+    <div class="ck"><strong>ML Classifier</strong><br>
+      <span class="muted">Machine learning prediction if trained</span></div>
   </div>
+</div>
 </div>
 
 <script>
@@ -148,8 +270,8 @@ HR Department`
 function fillSample(type) {
   const s = samples[type];
   document.getElementById('fSubject').value = s.subject;
-  document.getElementById('fFrom').value    = s.from;
-  document.getElementById('fBody').value    = s.body;
+  document.getElementById('fFrom').value = s.from;
+  document.getElementById('fBody').value = s.body;
 }
 
 function clearForm() {

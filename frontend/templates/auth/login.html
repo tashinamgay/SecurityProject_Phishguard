@@ -1,40 +1,70 @@
 {% extends "base.html" %}
-{% block title %}— Login{% endblock %}
+{% block title %}- Login{% endblock %}
 {% block content %}
-<div class="auth-card">
+<section class="auth-shell">
+  <div class="auth-hero">
+    <div class="auth-brand">
+      <img src="{{ url_for('static', filename='css/cihe-logo.png') }}"
+           alt="CIHE"
+           class="brand-logo brand-logo-large"
+           onerror="this.style.display='none'">
+      <span>CyberMailGuard</span>
+    </div>
 
-  <!-- CIHE Logo + App Name -->
-  <div style="display:flex;align-items:center;justify-content:center;
-              gap:10px;margin-bottom:6px;">
-    <img src="{{ url_for('static', filename='css/cihe-logo.png') }}"
-         alt="CIHE"
-         style="width:40px;height:40px;border-radius:8px;object-fit:contain;"
-         onerror="this.style.display='none'">
-    <span style="font-size:1.6em;font-weight:700;">CyberMailGuard</span>
+    <div class="auth-copy">
+      <p class="eyebrow">Email security workspace</p>
+      <h1>Phishing detection with clear explanations.</h1>
+      <p>
+        A secure role based platform for email classification, risk scoring,
+        quarantine review, reporting, and DevSecOps evidence.
+      </p>
+    </div>
+
+    <div class="auth-feature-row">
+      <div class="auth-feature">
+        <strong>2FA</strong>
+        <span>Required for protected accounts</span>
+      </div>
+      <div class="auth-feature">
+        <strong>RBAC</strong>
+        <span>Admin and analyst workflows</span>
+      </div>
+      <div class="auth-feature">
+        <strong>Reports</strong>
+        <span>PDF and CSV export support</span>
+      </div>
+    </div>
   </div>
-  <p class="auth-sub">ICT932 — Cybersecurity Project</p>
 
-  <div style="border-top:1px solid var(--bdr);margin:14px 0;"></div>
-  <p style="font-size:.85em;color:var(--muted);margin-bottom:16px;">
-    Sign in to your account
-  </p>
+  <div class="auth-panel">
+    <div class="auth-card">
+      <p class="eyebrow">Secure sign in</p>
+      <h2>Welcome back</h2>
+      <p class="auth-sub">
+        Use your approved CyberMailGuard account to continue.
+      </p>
+      <div class="auth-note">
+        Two factor authentication is available for secured user accounts.
+      </div>
 
-  <form method="POST" action="{{ url_for('auth.login') }}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <div class="fg">
-      <label>Username</label>
-      <input class="fi" type="text" name="username"
-             placeholder="Your username" required autofocus>
+      <form method="POST" action="{{ url_for('auth.login') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="fg">
+          <label>Username</label>
+          <input class="fi" type="text" name="username"
+                 placeholder="Enter username" required autofocus>
+        </div>
+        <div class="fg">
+          <label>Password</label>
+          <input class="fi" type="password" name="password"
+                 placeholder="Enter password" required>
+        </div>
+        <button class="btn bp bfull" type="submit">Sign in</button>
+      </form>
+      <p class="auth-link">
+        Need an account <a href="{{ url_for('auth.register') }}">Register</a>
+      </p>
     </div>
-    <div class="fg">
-      <label>Password</label>
-      <input class="fi" type="password" name="password"
-             placeholder="Your password" required>
-    </div>
-    <button class="btn bp bfull" type="submit">Sign In →</button>
-  </form>
-  <p class="auth-link">
-    No account? <a href="{{ url_for('auth.register') }}">Register here</a>
-  </p>
-</div>
+  </div>
+</section>
 {% endblock %}

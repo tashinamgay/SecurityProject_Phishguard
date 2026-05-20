@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% block title %}— Manage Users{% endblock %}
+{% block title %} Manage Users{% endblock %}
 {% block content %}
 
 <div class="page-hdr">
   <div>
-    <h1 class="ptitle">👥 Manage Users</h1>
+    <h1 class="ptitle"> Manage Users</h1>
     <p class="psub">Approve, suspend, delete or change user roles</p>
   </div>
   {% if pending_count > 0 %}
   <div class="toast toast-warning" style="margin:0;">
-    ⚠️ {{ pending_count }} user(s) waiting for approval!
+     {{ pending_count }} user(s) waiting for approval!
   </div>
   {% endif %}
 </div>
@@ -34,7 +34,7 @@
         <td class="muted">{{ u.email }}</td>
         <td>
           <span class="badge {{ 'badge-purple' if u.role=='admin' else 'badge-blue' }}">
-            {{ '👑 Admin' if u.role == 'admin' else '👤 Analyst' }}
+            {{ ' Admin' if u.role == 'admin' else ' Analyst' }}
           </span>
         </td>
         <td>
@@ -58,7 +58,7 @@
                   style="display:inline;">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <button class="btn bs badge-green" type="submit">
-                ✅ Approve
+                 Approve
               </button>
             </form>
             {% endif %}
@@ -70,7 +70,7 @@
                   style="display:inline;">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <button class="btn bs badge-green" type="submit">
-                ✅ Reactivate
+                 Reactivate
               </button>
             </form>
             {% endif %}
@@ -82,8 +82,8 @@
                   style="display:inline;">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <button class="btn bs badge-yellow" type="submit"
-                      onclick="return confirm('Suspend this user?')">
-                ⏸ Suspend
+                      onclick="return confirm('Suspend this user')">
+                 Suspend
               </button>
             </form>
             {% endif %}
@@ -94,11 +94,11 @@
                   style="display:inline;">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <button class="btn bs badge-purple" type="submit"
-                      onclick="return confirm('Change this user role?')">
+                      onclick="return confirm('Change this user role')">
                 {% if u.role == 'admin' %}
-                  👤 Make Analyst
+                   Make Analyst
                 {% else %}
-                  👑 Make Admin
+                   Make Admin
                 {% endif %}
               </button>
             </form>
@@ -109,13 +109,13 @@
                   style="display:inline;">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <button class="btn bs badge-red" type="submit"
-                      onclick="return confirm('Permanently delete this user?')">
-                🗑 Delete
+                      onclick="return confirm('Permanently delete this user')">
+                 Delete
               </button>
             </form>
 
           {% else %}
-            <span class="muted">— (you)</span>
+            <span class="muted"> (you)</span>
           {% endif %}
         </td>
       </tr>

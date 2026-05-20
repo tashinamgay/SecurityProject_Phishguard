@@ -1,8 +1,10 @@
 # tests/test_security_controls.py
 # Focused DevSecOps/security regression tests
 
+from io import BytesIO
 from types import SimpleNamespace
 from bson import ObjectId
+from docx import Document
 
 import app as cybermailguard_app
 from app import create_app
@@ -95,3 +97,74 @@ def test_pdf_export_blocks_access_to_other_users_analysis(monkeypatch):
         response = dashboard_routes.export_pdf.__wrapped__(str(analysis_id))
 
     assert response.status_code == 302
+
+
+def test_csv_export_requires_user_analysis(monkeypatch):
+    app = make_app(csrf_enabled=False)
+    current_user_id = ObjectId()
+
+    class EmptyCursor(list):
+        pass
+
+    class FakeCollection:
+        def find(self, query):
+            assert query == {'user_id': current_user_id}
+            return EmptyCursor()
+
+    class FakeDb(dict):
+        def __getitem__(self, name):
+            return FakeCollection()
+
+    monkeypatch.setattr(dashboard_routes, 'get_db', lambda: FakeDb())
+    monkeypatch.setattr(dashboard_routes, 'current_user', SimpleNamespace(
+        id=str(current_user_id),
+        role='analyst',
+    ))
+
+    with app.test_request_context('/export/csv'):
+        response = dashboard_routes.export_csv.__wrapped__()
+
+    assert response.status_code == 302
+    assert response.location.endswith('/analyse')
+
+
+def test_csv_export_requires_admin_analysis(monkeypatch):
+    app = make_app(csrf_enabled=False)
+
+    class EmptyCursor(list):
+        pass
+
+    class FakeCollection:
+        def find(self, query):
+            assert query == {}
+            return EmptyCursor()
+
+    class FakeDb(dict):
+        def __getitem__(self, name):
+            return FakeCollection()
+
+    monkeypatch.setattr(dashboard_routes, 'get_db', lambda: FakeDb())
+    monkeypatch.setattr(dashboard_routes, 'current_user', SimpleNamespace(
+        id=str(ObjectId()),
+        role='admin',
+    ))
+
+    with app.test_request_context('/export/csv'):
+        response = dashboard_routes.export_csv.__wrapped__()
+
+    assert response.status_code == 302
+    assert response.location.endswith('/analyse')
+
+
+def test_docx_upload_text_can_be_extracted():
+    doc = Document()
+    doc.add_paragraph('Subject: Urgent account verification')
+    doc.add_paragraph('Click http://secure-bank-verification-login.com')
+    buffer = BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
+
+    raw = dashboard_routes._raw_text_from_upload(buffer, 'sample.docx')
+
+    assert 'Urgent account verification' in raw
+    assert 'http://secure-bank-verification-login.com' in raw

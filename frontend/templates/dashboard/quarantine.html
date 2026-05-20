@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}— Quarantine{% endblock %}
+{% block title %} Quarantine{% endblock %}
 {% block content %}
 
 <div class="page-hdr">
   <div>
-    <h1 class="ptitle">🔒 Quarantine</h1>
+    <h1 class="ptitle"> Quarantine</h1>
     <p class="psub">High-risk emails held for admin review before release</p>
   </div>
 </div>
@@ -36,7 +36,7 @@
         <td class="muted">{{ q.sender or 'Unknown Sender' }}</td>
         <td>
           <span class="badge badge-red">
-            🔴 {{ q.risk_score or 'N/A' }}/100
+             {{ q.risk_score or 'N/A' }}/100
           </span>
         </td>
         <td class="muted">
@@ -44,14 +44,14 @@
         </td>
         <td>
           <a href="{{ url_for('dashboard.results', aid=q.analysis_id|string) }}"
-             class="btn bo bs">👁 View</a>
+             class="btn bo bs"> View</a>
           <form method="POST"
                 action="{{ url_for('dashboard.release', qid=q._id|string) }}"
                 style="display:inline;"
-                onsubmit="return confirm('Release this email from quarantine?')">
+                onsubmit="return confirm('Release this email from quarantine')">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button class="btn bs badge-green" type="submit">
-              ✅ Release
+               Release
             </button>
           </form>
         </td>
@@ -62,7 +62,7 @@
   </div>
   {% else %}
   <div class="empty">
-    ✅ No emails currently in quarantine.
+     No emails currently in quarantine.
   </div>
   {% endif %}
 </div>

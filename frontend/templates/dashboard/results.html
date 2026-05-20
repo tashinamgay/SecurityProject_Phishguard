@@ -1,18 +1,18 @@
 {% extends "base.html" %}
-{% block title %}— Results{% endblock %}
+{% block title %} Results{% endblock %}
 {% block content %}
 
 <div class="page-hdr">
   <div>
     <h1 class="ptitle">Analysis Results</h1>
     <p class="psub">
-      {{ record.email_subject or 'Unknown Subject' }} —
+      {{ record.email_subject or 'Unknown Subject' }} 
       {{ record.analysed_at.strftime('%d %b %Y %H:%M') if record.analysed_at else '' }}
     </p>
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;">
-    <a href="{{ url_for('dashboard.export_pdf', aid=aid) }}" class="btn bo">⬇ PDF</a>
-    <a href="{{ url_for('dashboard.index') }}" class="btn bo">← Back</a>
+    <a href="{{ url_for('dashboard.export_pdf', aid=aid) }}" class="btn bo">Download Report</a>
+    <a href="{{ url_for('dashboard.index') }}" class="btn bo"> Back</a>
   </div>
 </div>
 
@@ -20,17 +20,17 @@
 <div class="risk-banner rb-{{ record.risk_level.lower() }}">
   <div style="display:flex;align-items:center;gap:16px;">
     <span style="font-size:2.8em;">
-      {{ '🔴' if record.risk_level=='RED' else ('🟡' if record.risk_level=='YELLOW' else '🟢') }}
+      {{ '' if record.risk_level=='RED' else ('' if record.risk_level=='YELLOW' else '') }}
     </span>
     <div>
       {% if record.risk_level == 'RED' %}
-        <div class="rl">HIGH RISK — Likely Phishing</div>
+        <div class="rl">HIGH RISK  Likely Phishing</div>
         <div class="rd">Do NOT click links or open attachments. Delete immediately.</div>
       {% elif record.risk_level == 'YELLOW' %}
-        <div class="rl">SUSPICIOUS — Handle With Caution</div>
+        <div class="rl">SUSPICIOUS  Handle With Caution</div>
         <div class="rd">Some phishing indicators found. Verify sender before acting.</div>
       {% else %}
-        <div class="rl">SAFE — No Major Threats Detected</div>
+        <div class="rl">SAFE  No Major Threats Detected</div>
         <div class="rd">No significant phishing indicators. Standard caution applies.</div>
       {% endif %}
     </div>
@@ -44,7 +44,7 @@
 <!-- AI Explanation -->
 {% if record.ai_explanation %}
 <div class="card ai-box">
-  <h3 style="margin-bottom:10px;">🤖 AI Explanation</h3>
+  <h3 style="margin-bottom:10px;"> AI Explanation</h3>
   <p style="line-height:1.7;font-size:.92em;">{{ record.ai_explanation }}</p>
 </div>
 {% endif %}
@@ -52,7 +52,7 @@
 <!-- ML Prediction -->
 {% if record.ml_prediction %}
 <div class="card ml-box">
-  <h3 style="margin-bottom:10px;">🧠 ML Classifier Prediction</h3>
+  <h3 style="margin-bottom:10px;"> ML Classifier Prediction</h3>
   <p>Prediction: <strong>{{ record.ml_prediction.prediction | capitalize }}</strong>
   (Confidence: {{ record.ml_prediction.confidence }}%)</p>
 </div>
@@ -61,7 +61,7 @@
 <!-- Two column layout -->
 <div class="two-col">
   <div class="card">
-    <h3 class="ctitle">📧 Email Details</h3>
+    <h3 class="ctitle"> Email Details</h3>
     <table class="dtbl">
       <tr><th>Subject</th><td>{{ record.email_subject or 'N/A' }}</td></tr>
       <tr><th>Sender</th><td>{{ record.email_sender or 'N/A' }}</td></tr>
@@ -73,14 +73,14 @@
       </tr>
       <tr><th>Attachments</th><td>{{ record.attachment_count }}</td></tr>
       <tr><th>Quarantined</th>
-        <td>{{ '🔒 Yes' if record.is_quarantined else '✅ No' }}</td>
+        <td>{{ ' Yes' if record.is_quarantined else ' No' }}</td>
       </tr>
     </table>
   </div>
 
   <div class="card">
-    <h3 class="ctitle">📊 Detection Summary</h3>
-    <!-- Count findings using simple loop — no 'match' filter needed -->
+    <h3 class="ctitle"> Detection Summary</h3>
+    <!-- Count findings using simple loop  no 'match' filter needed -->
     {% set header_hits = [] %}
     {% set url_hits = [] %}
     {% set attach_hits = [] %}
@@ -93,25 +93,25 @@
     {% endfor %}
     <div class="breakdown">
       <div class="brow">
-        <span>🔀 Header Spoofing</span>
+        <span> Header Spoofing</span>
         <span class="{{ 'text-red' if header_hits|length > 0 else '' }}">
           {{ header_hits|length }} finding(s)
         </span>
       </div>
       <div class="brow">
-        <span>🔗 Suspicious URLs</span>
+        <span> Suspicious URLs</span>
         <span class="{{ 'text-red' if url_hits|length > 0 else '' }}">
           {{ url_hits|length }} finding(s)
         </span>
       </div>
       <div class="brow">
-        <span>📎 Attachment Threats</span>
+        <span> Attachment Threats</span>
         <span class="{{ 'text-red' if attach_hits|length > 0 else '' }}">
           {{ attach_hits|length }} finding(s)
         </span>
       </div>
       <div class="brow">
-        <span>🔑 Keyword Matches</span>
+        <span> Keyword Matches</span>
         <span class="{{ 'text-yellow' if kw_hits|length > 0 else '' }}">
           {{ kw_hits|length }} finding(s)
         </span>
@@ -122,7 +122,7 @@
 
 <!-- Full Findings -->
 <div class="card">
-  <h3 class="ctitle">🔎 Full Detection Findings</h3>
+  <h3 class="ctitle"> Full Detection Findings</h3>
   {% if reasons %}
   <ul class="findings">
     {% for r in reasons %}
@@ -147,7 +147,7 @@
     {% endfor %}
   </ul>
   {% else %}
-  <p class="muted">✅ No suspicious indicators detected.</p>
+  <p class="muted"> No suspicious indicators detected.</p>
   {% endif %}
 </div>
 

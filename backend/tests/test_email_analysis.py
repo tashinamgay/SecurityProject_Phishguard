@@ -65,6 +65,17 @@ def test_parser_extracts_urls():
     assert len(parse_email(raw)['urls']) > 0
 
 
+def test_parser_extracts_html_href_urls():
+    raw = (
+        'Subject: HTML Test\n'
+        'From: a@b.com\n'
+        'Content-Type: text/html\n\n'
+        '<html><body><a href="https://fake-bank.xyz/login">Login</a></body></html>'
+    )
+    parsed = parse_email(raw)
+    assert 'https://fake-bank.xyz/login' in parsed['urls']
+
+
 # Header Tests
 def test_reply_to_mismatch_detected():
     parsed = {
